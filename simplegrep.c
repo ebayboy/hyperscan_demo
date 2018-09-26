@@ -6,9 +6,13 @@
 
 #include <hs.h>
 
+/* API document: 
+ * http://intel.github.io/hyperscan/dev-reference/api_files.html#c.HS_FLAG_SINGLEMATCH
+ **/
+
 static int eventHandler(unsigned int id, unsigned long long from,
         unsigned long long to, unsigned int flags, void *ctx) {
-    printf("Match for pattern \"%s\" at offset %llu\n", (char *)ctx, to);
+    printf("Match for pattern \"%s\" at from %llu  to %llu\n", (char *)ctx, from, to);
     return 0;
 }
 
@@ -23,8 +27,11 @@ int main(int argc, char *argv[]) {
 
     hs_database_t *database;
     hs_compile_error_t *compile_err;
+
+
+    /* 如果要获取回调函数的from位置，则编译时增加 HS_FLAG_SOM_LEFTMOST */
     /* database */
-    if (hs_compile(pattern, HS_FLAG_DOTALL, HS_MODE_BLOCK, NULL, &database,
+    if (hs_compile(pattern, HS_FLAG_DOTALL | HS_FLAG_SOM_LEFTMOST, HS_MODE_BLOCK, NULL, &database,
                 &compile_err) != HS_SUCCESS) {
         fprintf(stderr, "ERROR: Unable to compile pattern \"%s\": %s\n",
                 pattern, compile_err->message);

@@ -1,3 +1,7 @@
+
+API:
+http://intel.github.io/hyperscan/dev-reference/api_files.html#c.HS_FLAG_SINGLEMATCH
+
 Hyperscan Example Code
 ======================
 
