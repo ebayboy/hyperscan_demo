@@ -104,10 +104,11 @@ int main(int argc, char *argv[]) {
         "(101 & 102 & 103) | (104 & !105)",
         "!101 & 102",
         "!(!101 | 102)",
-        "101 & !102"};
+        "101 & !102", /* 1005 */
+        "101 & 105" }; /* 1006 */
     
     unsigned flags[] = {
-        HS_FLAG_QUIET,
+        0,
         HS_FLAG_QUIET,
         HS_FLAG_QUIET,
         HS_FLAG_QUIET,      /* 104 */
@@ -116,9 +117,11 @@ int main(int argc, char *argv[]) {
         HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
         HS_FLAG_COMBINATION,
         HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH};
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH
+    };
 
-    unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005};
+    unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005, 1006};
     hs_error_t err = hs_compile_multi(expr, flags, ids, 9, HS_MODE_NOSTREAM,
             NULL, &db, &compile_err);
 
