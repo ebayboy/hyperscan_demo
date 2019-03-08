@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         "foobar.*gh",
         "teakettle{4,10}",  /* 104 */
         "ijkl[mMn]",        /* 105 */
-        "104 & !105",   
+        "104 & !105",    /* 1001 */
         "(101 & 102 & 103) | (104 & !105)",
         "!101 & 102",
         "!(!101 | 102)",
@@ -108,17 +108,17 @@ int main(int argc, char *argv[]) {
         "101 & 105" }; /* 1006 */
     
     unsigned flags[] = {
-        0,
-        HS_FLAG_QUIET,
-        HS_FLAG_QUIET,
-        HS_FLAG_QUIET,      /* 104 */
-        0,      /* 105 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,      /* 104 */
+        HS_FLAG_SINGLEMATCH,      /* 105 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1001 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1002 */
+        HS_FLAG_COMBINATION,            /* 1003 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1004 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1005 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH  /* 1006 */
     };
 
     unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005, 1006};
