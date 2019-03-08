@@ -12,11 +12,12 @@
 
 static int eventHandler(unsigned int id, unsigned long long from,
         unsigned long long to, unsigned int flags, void *ctx) {
-    printf("Match for pattern \"%s\" at from %llu  to %llu\n", (char *)ctx, from, to);
+    printf("Match for pattern \"%s\" at from %llu  to %llu  flags:%u\n", (char *)ctx, from, to, flags);
     return 0;
 }
 
 int main(int argc, char *argv[]) {
+#if 0
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <pattern> <input>\n", argv[0]);
         return -1;
@@ -24,14 +25,27 @@ int main(int argc, char *argv[]) {
 
     char *pattern = argv[1];
     char *inputData = argv[2];
+#else
+    char *pattern = "10014";
+    char *inputData = "/10014/prefix 10014 aa10111bb 10112 10113 10114 foo";
+#endif
 
     hs_database_t *database;
     hs_compile_error_t *compile_err;
 
 
+#define RULES_HS_FLAGS   (HS_FLAG_CASELESS    | \
+                HS_FLAG_SINGLEMATCH | \
+                HS_FLAG_DOTALL)
+
+
+#define RULES_HS_FLAGS_LEFTMOST        (HS_FLAG_CASELESS    | \
+                HS_FLAG_DOTALL      | \
+                HS_FLAG_SOM_LEFTMOST) 
+
     /* 如果要获取回调函数的from位置，则编译时增加 HS_FLAG_SOM_LEFTMOST */
     /* database */
-    if (hs_compile(pattern, HS_FLAG_DOTALL | HS_FLAG_SOM_LEFTMOST, HS_MODE_BLOCK, NULL, &database,
+    if (hs_compile(pattern, RULES_HS_FLAGS_LEFTMOST, HS_MODE_BLOCK, NULL, &database,
                 &compile_err) != HS_SUCCESS) {
         fprintf(stderr, "ERROR: Unable to compile pattern \"%s\": %s\n",
                 pattern, compile_err->message);
