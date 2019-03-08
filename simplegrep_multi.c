@@ -100,12 +100,9 @@ int main(int argc, char *argv[]) {
         "foobar.*gh",
         "teakettle{4,10}",  /* 104 */
         "ijkl[mMn]",        /* 105 */
-        "104 & !105",    /* 1001 */
-        "(101 & 102 & 103) | (104 & !105)",
-        "!101 & 102",
-        "!(!101 | 102)",
-        "101 & !102", /* 1005 */
-        "101 & 105" }; /* 1006 */
+        "104 & 105",    /* 1001 */
+        "104 & !105"    /* 1002 */
+    };
     
     unsigned flags[] = {
         HS_FLAG_SINGLEMATCH,
@@ -113,16 +110,14 @@ int main(int argc, char *argv[]) {
         HS_FLAG_SINGLEMATCH,
         HS_FLAG_SINGLEMATCH,      /* 104 */
         HS_FLAG_SINGLEMATCH,      /* 105 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1001 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1002 */
-        HS_FLAG_COMBINATION,            /* 1003 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1004 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH, /* 1005 */
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH  /* 1006 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,  /* 1001 */
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH   /* 1002 */
     };
 
-    unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004, 1005, 1006};
-    hs_error_t err = hs_compile_multi(expr, flags, ids, 9, HS_MODE_NOSTREAM,
+    unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002};
+    hs_error_t err = hs_compile_multi(expr, flags, ids, 
+            sizeof(ids)/sizeof(unsigned) , 
+            HS_MODE_NOSTREAM,
             NULL, &db, &compile_err);
 
     /* Next, we read the input data file into a buffer. */
