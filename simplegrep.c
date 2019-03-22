@@ -5,6 +5,14 @@
 #include <string.h>
 
 #include <hs.h>
+#include <time.h>
+
+
+long long now() {
+    struct timeval tv; 
+    gettimeofday(&tv,NULL);
+    return tv.tv_sec*1000*1000 + tv.tv_usec;
+}
 
 /* API document: 
  * http://intel.github.io/hyperscan/dev-reference/api_files.html#c.HS_FLAG_SINGLEMATCH
@@ -12,7 +20,7 @@
 
 static int eventHandler(unsigned int id, unsigned long long from,
         unsigned long long to, unsigned int flags, void *ctx) {
-    printf("Match for pattern \"%s\" at from %llu  to %llu  flags:%u\n", (char *)ctx, from, to, flags);
+    //printf("Match for pattern \"%s\" at from %llu  to %llu  flags:%u\n", (char *)ctx, from, to, flags);
     return 0;
 }
 
@@ -27,7 +35,10 @@ int main(int argc, char *argv[]) {
     char *inputData = argv[2];
 #else
     char *pattern = "10014";
-    char *inputData = "/10014/prefix 10014 aa10111bb 10112 10113 10114 foo";
+    
+    //hyperscan 对^和$都有严格校验， 必须出现在正确位置 char *pattern = "/testsss/path/@#$%";
+    //char *inputData = "/10014/prefix 10014 aa10111bb 10112 10113 10114 foo";
+    char *inputData = "10101555adsfasdfasdfasdfasf123123safasseafs";
 #endif
 
     hs_database_t *database;
@@ -45,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     /* 如果要获取回调函数的from位置，则编译时增加 HS_FLAG_SOM_LEFTMOST */
     /* database */
-    if (hs_compile(pattern, RULES_HS_FLAGS_LEFTMOST, HS_MODE_BLOCK, NULL, &database,
+    if (hs_compile(pattern, RULES_HS_FLAGS, HS_MODE_BLOCK, NULL, &database,
                 &compile_err) != HS_SUCCESS) {
         fprintf(stderr, "ERROR: Unable to compile pattern \"%s\": %s\n",
                 pattern, compile_err->message);
@@ -61,6 +72,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    long long st = now();
     /* scan */
     if (hs_scan(database, inputData, strlen(inputData), 
                 0, scratch, eventHandler, pattern) != HS_SUCCESS) {
@@ -70,6 +82,7 @@ int main(int argc, char *argv[]) {
         hs_free_database(database);
         return -1;
     }
+    fprintf(stderr, "%s:%d cost:%lu(us) \n", __func__, __LINE__, now() - st);
 
     /* free scratch & db */
     hs_free_scratch(scratch);
