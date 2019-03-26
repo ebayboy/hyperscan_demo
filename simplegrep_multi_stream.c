@@ -57,6 +57,12 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    hs_error_t err = hs_open_stream(db_streaming, 0, &stream);
+    if (err != HS_SUCCESS) {
+        cerr << "ERROR: Unable to open stream. Exiting." << endl;
+        exit(-1);
+    }
+
     if (hs_scan(db, data, strlen(data), 0, scratch, on_match, expr) != HS_SUCCESS) {
         fprintf(stderr, "ERROR: Unable to scan input buffer. Exiting.\n");
         hs_free_scratch(scratch);
