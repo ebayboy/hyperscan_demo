@@ -17,8 +17,15 @@ static int on_match(unsigned int id, unsigned long long from,
 int main(int argc, char *argv[]) 
 {
     /* data ijklM cross package */
+#if 1
+    /* multi package check */
     const char *data[] = {"abc teakettleeeeeeeeijk", "lM"};
     unsigned int len[] = {strlen(data[0]), strlen(data[1])};
+#else 
+    /* single packet check */
+    const char *data[] = {"abc teakettleeeeeeeeijk"};
+    unsigned int len[] = {strlen(data[0])};
+#endif
 
     hs_database_t *db = NULL;
     hs_compile_error_t *compile_err = NULL;
