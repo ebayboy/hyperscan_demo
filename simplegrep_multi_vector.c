@@ -14,9 +14,10 @@ static int on_match(unsigned int id, unsigned long long from,
 }
 
 
-int main(int argc, char *argv[]) {
-
-    const char *data[] = {"abc teakettleeeeeeee", "ijklM"};
+int main(int argc, char *argv[]) 
+{
+    /* data ijklM cross package */
+    const char *data[] = {"abc teakettleeeeeeeeijk", "lM"};
     unsigned int len[] = {strlen(data[0]), strlen(data[1])};
 
     hs_database_t *db = NULL;
