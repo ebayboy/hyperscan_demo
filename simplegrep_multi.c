@@ -16,7 +16,8 @@ static int on_match(unsigned int id, unsigned long long from,
 
 int main(int argc, char *argv[]) {
 
-    char *data = "abc teakettleeeeeeee ijklM";
+    char *data = "abc teakettleeeeeeee";
+    //char *data = "abc teakettleeeeeeee ijklM";
     //char *data = "abcdefxxfoobarrrghabcxdefxteakettleeeeexxxxijklmxxdef";
     fprintf(stdout, "data:[%s]\n", data);
 
@@ -31,7 +32,8 @@ int main(int argc, char *argv[]) {
 
         /* 注意: id大的规则在前面, 在执行id大的规则的时候，
          * 保证id小的规则已经匹配完成, 否则未匹配的取非会为True*/
-        "105 & !104"         /*  1001 */ 
+        //"104 & !105"         /*  1001 */ 
+        "!105 & 104"         /*  1001 */ 
     }; 
 
     /* hit 101 & 104 & 105 */
