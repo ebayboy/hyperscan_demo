@@ -8,8 +8,9 @@
 #include <hs.h>
 
 static int on_match(unsigned int id, unsigned long long from,
-                        unsigned long long to, unsigned int flags, void *ctx) {
-    printf("id:[%d] Match for at offset %llu\n", id, to);
+                        unsigned long long to, unsigned int flags, void *ctx) 
+{
+    printf("id:[%d] Match for at offset %llu flags:[%u]\n", id, to, flags);
     return 0;
 }
 
@@ -39,7 +40,8 @@ int main(int argc, char *argv[])
         /* 注意: id大的规则在前面, 在执行id大的规则的时候，
          * 保证id小的规则已经匹配完成, 否则未匹配的取非会为True*/
         //"104 & !105"         /*  1001 */ 
-        "!105 & 104"         /*  1001 */ 
+        //"104 & !104"         /*  1001 */ 
+        "(101 & 102 & 103) | (104 & !105)"
     }; 
 
     /* hit 101 & 104 & 105 */

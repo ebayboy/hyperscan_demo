@@ -16,11 +16,12 @@ static int on_match(unsigned int id, unsigned long long from,
 
 int main(int argc, char *argv[]) {
 
-    char *data = "abc teakettleeeeeeee";
-    //char *data = "abc teakettleeeeeeee ijklM";
+    //char *data = "abc teakettleeeeeeee";
+    char *data = "abcdef teakettleeeeeeee ijklM";
     //char *data = "abcdefxxfoobarrrghabcxdefxteakettleeeeexxxxijklmxxdef";
     fprintf(stdout, "data:[%s]\n", data);
 
+#if 0
     hs_database_t *db = NULL;
     hs_compile_error_t *compile_err = NULL;
     const char *expr[] = {
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
         /* 注意: id大的规则在前面, 在执行id大的规则的时候，
          * 保证id小的规则已经匹配完成, 否则未匹配的取非会为True*/
         //"104 & !105"         /*  1001 */ 
-        "!105 & 104"         /*  1001 */ 
+        "104 & !105"         /*  1001 */ 
     }; 
 
     /* hit 101 & 104 & 105 */
@@ -43,12 +44,39 @@ int main(int argc, char *argv[]) {
         HS_FLAG_SINGLEMATCH,
         HS_FLAG_SINGLEMATCH,
         HS_FLAG_SINGLEMATCH,
-        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH};
+        HS_FLAG_COMBINATION |HS_FLAG_SINGLEMATCH };
 
     unsigned ids[] = {101, 102, 103, 104, 105, 1001};
     hs_error_t err = hs_compile_multi(expr, flags, ids, 
             sizeof(ids)/sizeof(unsigned), HS_MODE_NOSTREAM,
             NULL, &db, &compile_err);
+#else 
+    hs_database_t *db = NULL;
+    hs_compile_error_t *compile_err = NULL;
+    const char *expr[] = {
+        "abc",
+        "def",
+        "foobar.*gh",
+        "teakettle{4,10}",
+        "ijkl[mMn]",
+        "(101 & 102 & 103) | (104 & !105)",
+        "!101 & 102",
+        "!(!101 | 102)",
+        "101 & !102"};
+    unsigned flags[] = {
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,
+        HS_FLAG_SINGLEMATCH,
+        0,
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
+        HS_FLAG_COMBINATION,
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH,
+        HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH};
+    unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004};
+    hs_error_t err = hs_compile_multi(expr, flags, ids, 9, HS_MODE_NOSTREAM,
+            NULL, &db, &compile_err); 
+#endif
 
     hs_scratch_t *scratch = NULL;
     if (hs_alloc_scratch(db, &scratch) != HS_SUCCESS) {
