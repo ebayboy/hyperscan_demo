@@ -58,11 +58,12 @@ int main(int argc, char *argv[]) {
         "def",
         "foobar.*gh",
         "teakettle{4,10}",
-        "ijkl[mMn]",
-        "(101 & 102 & 103) | (104 & !105)",
-        "!101 & 102",
-        "!(!101 | 102)",
-        "101 & !102"};
+        "ijkl[mMn]", /* 105 */
+        "(101 & 102 & 103) | (104 & !105)", /* 1001 */
+        "!101 & 102", /* 1002 */
+        "!(!101 | 102)", /* 1003 */
+        "101 & !102" /* 1004 */
+    };
     unsigned flags[] = {
         HS_FLAG_SINGLEMATCH,
         HS_FLAG_SINGLEMATCH,
