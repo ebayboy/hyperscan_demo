@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     //char *data = "abcdefxxfoobarrrghabcxdefxteakettleeeeexxxxijklmxxdef";
     fprintf(stdout, "data:[%s]\n", data);
 
-#if 0
+#if 1
     hs_database_t *db = NULL;
     hs_compile_error_t *compile_err = NULL;
     const char *expr[] = {
