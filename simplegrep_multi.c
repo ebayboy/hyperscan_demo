@@ -35,8 +35,20 @@ int main(int argc, char *argv[]) {
         /* 注意: id大的规则在前面, 在执行id大的规则的时候，
          * 保证id小的规则已经匹配完成, 否则未匹配的取非会为True*/
         //"104 & !105"         /*  1001 */ 
-        "104 & !105"         /*  1001 */ 
+        "101 & !105"         /*  1001 */ 
     }; 
+
+    /* RUN:
+     * ./simplegrep_multi
+     * data:[abcdef teakettleeeeeeee ijklM]
+     * id:[101] Match for at offset 3
+     *
+     * TODO ? 此时1001表达式逻辑值为真， 但是没有匹配的规则
+     * id:[1001] Match for at offset 3  
+     * id:[102] Match for at offset 6
+     * id:[104] Match for at offset 19
+     * id:[105] Match for at offset 29
+     **/
 
     /* hit 101 & 104 & 105 */
     unsigned flags[] = {
@@ -72,6 +84,15 @@ int main(int argc, char *argv[]) {
         HS_FLAG_COMBINATION | HS_FLAG_SINGLEMATCH};
     unsigned ids[] = {101, 102, 103, 104, 105, 1001, 1002, 1003, 1004};
 #endif
+
+    /*  ./simplegrep_multi
+     *  data:[abcdef teakettleeeeeeee ijklM]
+     *  id:[101] Match for at offset 3
+     *  id:[1001] Match for at offset 3
+     *  id:[102] Match for at offset 6
+     *  id:[104] Match for at offset 19
+     *  id:[105] Match for at offset 29
+     **/
 
     hs_error_t err = hs_compile_multi(expr, flags, ids, 
             sizeof(ids)/sizeof(unsigned), 
