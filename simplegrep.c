@@ -82,7 +82,9 @@ int main(int argc, char *argv[]) {
         hs_free_database(database);
         return -1;
     }
-    fprintf(stderr, "%s:%d cost:%lu(us) \n", __func__, __LINE__, now() - st);
+
+    fprintf(stderr, "%s:%d str[%s] pattern[%s] cost:%lu(us) \n", 
+			__func__, __LINE__, inputData, pattern, now() - st);
 
     /* free scratch & db */
     hs_free_scratch(scratch);
