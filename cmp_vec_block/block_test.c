@@ -9,6 +9,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+//比较匹配字符串数组， BLOCK模式和VECTOR模式的效率
+
 static int l = 0;
 
 char * malloc_rands(size_t slen)
@@ -87,9 +89,9 @@ static int on_match(unsigned int id, unsigned long long from, unsigned long long
 }
 
 int match_datas_vector(
-		hs_database_t *db, hs_scratch_t *scratch, 
-		hs_database_t *db_vec, hs_scratch_t *scratch_vec, 
-		char *data[])
+    hs_database_t *db, hs_scratch_t *scratch,
+    hs_database_t *db_vec, hs_scratch_t *scratch_vec,
+    char *data[])
 {
     long tm_start = 0, tm_end = 0;
 
@@ -108,41 +110,41 @@ int match_datas_vector(
         strlen(data[9])
     };
 
-	//预热匹配： 否则第一次匹配耗时高， 无法正常评估VECTOR和BLOCK模式哪个性能好
+    //预热匹配： 否则第一次匹配耗时高， 无法正常评估VECTOR和BLOCK模式哪个性能好
     for (int i = 0 ; i < 10; i++)
     {
         if (hs_scan(db, data[i], strlen(data[i]), 0, scratch, on_match, NULL) != HS_SUCCESS)
         {
-			printf("Error: hs_scan!\n");
+            printf("Error: hs_scan!\n");
             return -1;
         }
     }
-    printf("pre match done!\n");
+    //结论： 无论vector还是block那个先匹配， 都是block性能好于vector模式
 
-	//结论： 无论vector还是block那个先匹配， 都是block性能好于vector模式
-	
-	//1. VECTOR Match
+    //1. VECTOR模式匹配
     GETTIMEUSEC(&tm_start);
-	if (hs_scan_vector(db_vec, (const char * const*)data, len, 10, 0, scratch_vec, on_match, NULL) != HS_SUCCESS) 
-	{
-		printf("Error: hs_scan_vector!\n");
-		return -1;
-	}
-	GETTIMEUSEC(&tm_end);
-    printf("vector cost:%li\n", tm_end - tm_start);
-
-	//2. BLOCK Match
-    GETTIMEUSEC(&tm_start);
-    for (int i = 0 ; i < 10; i++)
+    if (hs_scan_vector(db_vec, (const char * const*)data, len, 10, 0, scratch_vec, on_match, NULL) != HS_SUCCESS)
     {
-        if (hs_scan(db, data[i], strlen(data[i]), 0, scratch, on_match, NULL) != HS_SUCCESS)
-        {
-			printf("Error: hs_scan!\n");
-            return -1;
-        }
+        printf("Error: hs_scan_vector!\n");
+        return -1;
     }
     GETTIMEUSEC(&tm_end);
-    printf("block cost:%li\n", tm_end - tm_start);
+	int vec_cost = tm_end - tm_start;
+
+    //2. BLOCK模式匹配
+    GETTIMEUSEC(&tm_start);
+    for (int i = 0 ; i < 10; i++)
+    {
+        if (hs_scan(db, data[i], strlen(data[i]), 0, scratch, on_match, NULL) != HS_SUCCESS)
+        {
+            printf("Error: hs_scan!\n");
+            return -1;
+        }
+    }
+	int block_cost;
+    GETTIMEUSEC(&tm_end);
+	block_cost = tm_end - tm_start;
+    printf("cost block:[%d] vector:[%d]\n", block_cost, vec_cost);
 
     return 0;
 }
@@ -236,19 +238,22 @@ int main(int argc, char *argv[])
 
     hs_build(&db_vec, &scratch_vec, HS_MODE_VECTORED);
 
-	if (db == NULL || scratch == NULL || db_vec == NULL || scratch_vec == NULL) {
-		printf("Error: db:%p scratch:%p db_vec:%p scratch_vec:%p\n");
-		return -1;
-	}
+    if (db == NULL || scratch == NULL || db_vec == NULL || scratch_vec == NULL)
+    {
+        printf("Error: db:%p scratch:%p db_vec:%p scratch_vec:%p\n");
+        return -1;
+    }
 
-	//构建数据
-	char *data[10] = {0};
-    malloc_datas(data, 10);
+    //构建数据
+    char *data[10] = {0};
 
-	printf("=====match block\n");
-	match_datas_vector(db, scratch, db_vec, scratch_vec, data);
-
-    free_datas(data, 10);
+    for(int i = 0; i<10; i++)
+    {
+        malloc_datas(data, 10);
+        printf("=====[%d] match\n", i);
+        match_datas_vector(db, scratch, db_vec, scratch_vec, data);
+        free_datas(data, 10);
+    }
 
 
     /* free scratch & db */
